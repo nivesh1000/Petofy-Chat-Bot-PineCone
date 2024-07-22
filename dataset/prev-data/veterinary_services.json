@@ -1,0 +1,26 @@
+{
+    "service": "Veterinary Services",
+    "description": "Comprehensive veterinary services including online and in-person consultations, and Vet on Call for home visits.",
+    "faqs": [{
+            "question": "How can I book an online consultation with a vet?",
+            "answer": "You can book an online consultation through the Petofy platform by selecting a convenient time and choosing a veterinarian from the list provided."
+        },
+        {
+            "question": "What types of veterinary services are available?",
+            "answer": "Services include general health check-ups, vaccinations, emergency care, and specialized treatments."
+        },
+        {
+            "question": "Do you offer emergency veterinary services?",
+            "answer": "Yes, Petofy provides 24/7 emergency veterinary services. You can call our hotline for immediate assistance."
+        }
+    ],
+    "additional_info": [{
+            "title": "Vet on Call",
+            "details": "Our Vet on Call service allows you to get veterinary care for your pet in the comfort of your home."
+        },
+        {
+            "title": "Specialized Treatments",
+            "details": "We offer specialized treatments for chronic conditions and complex medical cases."
+        }
+    ]
+}
