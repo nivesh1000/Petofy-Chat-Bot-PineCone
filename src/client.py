@@ -4,7 +4,7 @@ from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 from dotenv import load_dotenv
 from openai import AzureOpenAI
-from pathmaker import env_path
+from src.pathmaker import env_path
 
 
 # Load environment variables from the .env file
