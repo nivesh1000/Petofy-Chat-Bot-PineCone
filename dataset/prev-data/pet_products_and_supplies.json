@@ -1,0 +1,17 @@
+{
+    "service": "Pet Products and Supplies",
+    "description": "Wide range of pet products and supplies including food, toys, accessories, and grooming products to keep your pets happy and healthy.",
+    "faqs": [{
+            "question": "What types of pet products do you offer?",
+            "answer": "We offer pet food, toys, grooming products, accessories, and health supplies for various types of pets."
+        },
+        {
+            "question": "Can I purchase products online?",
+            "answer": "Yes, all our products are available for online purchase and can be delivered to your doorstep."
+        },
+        {
+            "question": "Do you offer discounts on pet supplies?",
+            "answer": "Yes, we have regular promotions and discounts on a variety of pet products."
+        }
+    ]
+}

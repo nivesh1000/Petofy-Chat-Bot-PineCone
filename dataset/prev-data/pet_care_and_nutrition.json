@@ -1,0 +1,26 @@
+{
+    "service": "Pet Care and Nutrition",
+    "description": "Guidance on proper pet care, feeding schedules, and nutritional needs to ensure your pets stay healthy and happy.",
+    "faqs": [{
+            "question": "What is the best diet for my pet?",
+            "answer": "The best diet depends on your pet's age, breed, and health condition. Our veterinarians can provide tailored dietary recommendations."
+        },
+        {
+            "question": "How often should I feed my pet?",
+            "answer": "Most pets do well with two meals a day, but feeding schedules can vary based on the pet's needs. Consult with our experts for personalized advice."
+        },
+        {
+            "question": "What are the signs of a nutritional deficiency in pets?",
+            "answer": "Common signs include lethargy, weight loss, poor coat condition, and changes in appetite. If you notice these symptoms, consult a veterinarian."
+        }
+    ],
+    "additional_info": [{
+            "title": "Customized Feeding Plans",
+            "details": "We offer personalized feeding plans based on your pet's specific needs and lifestyle."
+        },
+        {
+            "title": "Nutritional Supplements",
+            "details": "Petofy provides recommendations for supplements that can help address specific health concerns."
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+    "service": "Pet Training",
+    "description": "Professional training services to help your pets develop good behavior and learn new skills.",
+    "faqs": [{
+            "question": "What types of training do you offer?",
+            "answer": "We offer obedience training, behavior modification, and specialized training for puppies and adult dogs."
+        },
+        {
+            "question": "How long does a training session last?",
+            "answer": "Training sessions typically last between 30 minutes to an hour, depending on the type of training and the pet's needs."
+        },
+        {
+            "question": "Can you train my pet at home?",
+            "answer": "Yes, we offer both in-person and at-home training sessions to provide flexibility for pet owners."
+        }
+    ],
+    "additional_info": [{
+            "title": "Customized Training Programs",
+            "details": "Our trainers create customized programs based on your pet's behavior and learning pace."
+        },
+        {
+            "title": "Group Training Classes",
+            "details": "We offer group classes that provide socialization opportunities and collaborative learning."
+        }
+    ]
+}

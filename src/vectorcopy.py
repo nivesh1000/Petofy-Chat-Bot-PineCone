@@ -23,9 +23,9 @@ def generate_embeddings():
             }
         )
         index += 1
-    # Write vectors to a JSON file
-    # with open("vector1_data_for_pinecone.json", "w") as json_file:
-    #     json.dump(vectors, json_file)
+
+    with open("vector1_data_for_pinecone.json", "w") as json_file:
+        json.dump(vectors, json_file)
 
 
 generate_embeddings()
