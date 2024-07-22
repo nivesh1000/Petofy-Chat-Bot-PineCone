@@ -18,6 +18,11 @@ from src.client import client_env
 
 client = client_env()
 
+pinecone_api_key = os.getenv("PINECONE_API_KEY")
+pc = Pinecone(api_key=pinecone_api_key)
+index = pc.Index("web-scrap-index")
+# from src.pinecone_upsert import index
+
 print('''Hello! 👋\nI'm here to assist you with your queries related to Petofy.
 You can ask me anything, and I'll do my best to help.
 To end your session at any time, simply type "exit".
@@ -30,10 +35,7 @@ while(query!='exit'):
         break
     query_embedding=client.embeddings.create(input=query, model="text-embedding")
 
-    pinecone_api_key = os.getenv("PINECONE_API_KEY")
-    pc = Pinecone(api_key=pinecone_api_key)
-    index = pc.Index("web-scrap-index")
-    # from src.pinecone_upsert import index
+
 
     similar_queries_obj=index.query(
         namespace="ns1",
