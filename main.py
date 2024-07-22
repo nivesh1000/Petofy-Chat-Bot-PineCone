@@ -2,7 +2,6 @@ import os
 from openai import AzureOpenAI
 from dotenv import load_dotenv, find_dotenv
 from src.client import client_env
-
 from src.pathmaker import env_path
 
 # Load environment variables from the .env file
@@ -22,17 +21,18 @@ from pinecone.grpc import PineconeGRPC as Pinecone
 from src.client import client_env
 
 client = client_env()
-query="what is petofy"
+query="what is pet microchip"
 query_embedding=client.embeddings.create(input=query, model="text-embedding")
 
-pc = Pinecone(api_key="3b40a01e-51af-4ebc-bf71-fe1e7104fa08")
+pinecone_api_key = os.getenv("PINECONE_API_KEY")
+pc = Pinecone(api_key=pinecone_api_key)
 index = pc.Index("web-scrap-index")
 # from src.pinecone_upsert import index
 
 similar_queries_obj=index.query(
     namespace="ns1",
     vector=query_embedding.data[0].embedding,
-    top_k=5,
+    top_k=3,
     include_values=False,
     include_metadata=True
 )
@@ -54,10 +54,6 @@ prompt = prompt_base + query
 completion = chat_client.chat.completions.create(
     model=deployment,
     messages=[
-        {
-            "role": "system",
-            "content": "You are a helpful assistant. Only provide responses based on the information given. If asked questions outside the dataset, reply 'Sorry, I can't answer that.'",
-        },
         {"role": "user", "content": prompt},
     ],
     extra_body={
