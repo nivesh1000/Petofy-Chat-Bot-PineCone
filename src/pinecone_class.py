@@ -11,13 +11,12 @@ class PineCone:
         self.pc = Pinecone(api_key=self.pinecone_api_key)
 
     def exist_check(self,index_name):
-        if index_name  in self.pc.list_indexes().names():
+        if index_name in self.pc.list_indexes().names():
             return True
         else:
             return False
         
     def create_index(self,index_name):
-        self.datapath=data_path
         if index_name not in self.pc.list_indexes().names():
             self.pc.create_index(
                 name=index_name,
@@ -55,9 +54,7 @@ class PineCone:
             "values": vector_data.data[0].embedding,
             "metadata": meta_data,
         }]
-        print("Data insertion started.")
         self.index.upsert(vector, namespace="ns1")
-        print("Data insertion completed.")
 
 
     def similarity_search(self,user_query,index_name):

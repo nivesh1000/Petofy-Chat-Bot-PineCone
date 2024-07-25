@@ -1,74 +1,63 @@
-import os
-from openai import AzureOpenAI
-from dotenv import load_dotenv, find_dotenv
-from src.client import client_env
-from src.pathmaker import env_path
-from pinecone.grpc import PineconeGRPC as Pinecone
-from src.client import client_env
-
+from src.pinecone_class import PineCone
+from src.response_class import Response
+    
 def main():
-    """
-    Main function to set up clients, and handle user queries.
-    """
-    # Load environment variables from the .env file
-    env_path = find_dotenv("config/.env")
-    load_dotenv(env_path)
-
-    # Initialize Azure OpenAI and Pinecone clients
-    service_endpoint = os.getenv("AZURE_ENDPOINT")
-    key = os.getenv("AZURE_RESOURCE_KEY")
-    deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
-
-    client = client_env()
-
-    pinecone_api_key = os.getenv("PINECONE_API_KEY")
-    pc = Pinecone(api_key=pinecone_api_key)
-    index = pc.Index("web-scrap-index")
-
-    # Welcome message
-    print('''Hello! 👋\nI'm here to assist you with your queries related to Petofy.
-    You can ask me anything, and I'll do my best to help.
-    To end your session at any time, simply type "exit".
-    How can I assist you today?''')
-
-    # Main loop to handle user queries
-    query = ""
     while True:
-        query = input("Query: ")
+        pine_obj = PineCone()
+        chat_obj = Response()
+        list_indexes = pine_obj.existing_indexes()
+        print("------------------------------------------")
+        print("Available indexes:")
+        for i, index in enumerate(list_indexes, start=1):
+            print(f"{i}. {index}")
 
-        if query.lower() == "exit":
+        print("\nWhat would you like to do?")
+        print("1. Add data to an existing index")
+        print("2. Create a new index")
+        print("3. Use model based on a specific index")
+        print("4. Exit")
+        
+        choice = input("Enter your choice (1/2/3/4): ")
+
+        if choice == '1':
+            index_name = input("Enter the name of index: ")
+            if pine_obj.exist_check(index_name):
+                data_path = input("Enter the path of data file: ")
+                pine_obj.load_json(data_path,index_name)
+                print(f"Data inserted to {index_name} successfully!")
+            else:
+                print("Index with this name don't exist.")    
+
+        elif choice == '2':
+            index_name = input("Enter the name of index: ")
+            if pine_obj.exist_check(index_name):
+                print("Index already exist.")
+            else:
+                pine_obj.create_index(index_name)
+                print(f"{index_name} index created successfully")
+                data_path = input("Enter the path of data file: ")
+                pine_obj.load_json(data_path,index_name)
+                print(f"Data inserted to {index_name} successfully!")
+
+        elif choice == '3':
+            index_name = input("Enter the name of Index you want the model to response with respect to: ")
+            # Welcome message
+            print('''Hello! 👋\nI'm here to assist you with your queries related to Petofy.
+            You can ask me anything, and I'll do my best to help.
+            To end your session at any time, simply type "exit".
+            How can I assist you today?''')
+            while True:
+                user_query = input("Query: ")
+                similarity_result = pine_obj.similarity_search(user_query, index_name)
+                if user_query == "exit":
+                    break
+                print(f"Response: {chat_obj.chat_completion(user_query,similarity_result)}")
+            print("Your chat session has ended.")
+        elif choice == '4':
+            print("Goodbye!")
             break
-
-        query_embedding = client.embeddings.create(input=query, model="text-embedding")
-
-        similar_queries_obj = index.query(
-            namespace="ns1",
-            vector=query_embedding.data[0].embedding,
-            top_k=5,
-            include_values=False,
-            include_metadata=True
-        )
-
-        similar_queries = '. '.join(str(match['metadata']) for match in similar_queries_obj['matches'])
-
-        # Base prompt
-        prompt_base = (
-            "Based on the following information:"
-            f"{similar_queries}"
-            "Please provide a direct and concise response for the following question and if the information needed to answer the question is not present in the provided text, reply with 'Sorry, I can't answer that.'\n"
-        )
-        prompt = prompt_base + query
-
-        completion = client.chat.completions.create(
-            model=deployment,
-            messages=[
-                {"role": "user", "content": prompt},
-            ]
-        )
-
-        print("Response: ",completion.choices[0].message.content)
-
-    print("Your session has ended. Thank you and goodbye! 👋")
+        else:
+            print("Invalid choice. Please try again.")
 
 if __name__ == "__main__":
     main()
