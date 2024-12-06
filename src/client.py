@@ -1,7 +1,4 @@
 import os
-from azure.core import credentials
-from azure.ai.textanalytics import TextAnalyticsClient
-from azure.core.credentials import AzureKeyCredential
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 from src.pathmaker import env_path
@@ -19,6 +16,3 @@ def client_env():
         azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
     )
     return client
-
-
-client_env()

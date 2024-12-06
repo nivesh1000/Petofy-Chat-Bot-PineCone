@@ -1,81 +1,63 @@
-import os
-from openai import AzureOpenAI
-from dotenv import load_dotenv, find_dotenv
-from src.client import client_env
+from src.pinecone_class import PineCone
+from src.response_class import Response
+    
+def main():
+    while True:
+        pine_obj = PineCone()
+        chat_obj = Response()
+        list_indexes = pine_obj.existing_indexes()
+        print("------------------------------------------")
+        print("Available indexes:")
+        for i, index in enumerate(list_indexes, start=1):
+            print(f"{i}. {index}")
 
-from src.pathmaker import env_path
+        print("\nWhat would you like to do?")
+        print("1. Add data to an existing index")
+        print("2. Create a new index")
+        print("3. Use model based on a specific index")
+        print("4. Exit")
+        
+        choice = input("Enter your choice (1/2/3/4): ")
 
-# Load environment variables from the .env file
-env_path = find_dotenv("config/.env")
-load_dotenv(env_path)
+        if choice == '1':
+            index_name = input("Enter the name of index: ")
+            if pine_obj.exist_check(index_name):
+                data_path = input("Enter the path of data file: ")
+                pine_obj.load_json(data_path,index_name)
+                print(f"Data inserted to {index_name} successfully!")
+            else:
+                print("Index with this name don't exist.")    
 
-service_endpoint = os.getenv("AZURE_ENDPOINT")
-key = os.getenv("AZURE_RESOURCE_KEY")
-deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+        elif choice == '2':
+            index_name = input("Enter the name of index: ")
+            if pine_obj.exist_check(index_name):
+                print("Index already exist.")
+            else:
+                pine_obj.create_index(index_name)
+                print(f"{index_name} index created successfully")
+                data_path = input("Enter the path of data file: ")
+                pine_obj.load_json(data_path,index_name)
+                print(f"Data inserted to {index_name} successfully!")
 
-chat_client = AzureOpenAI(
-    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-    api_version="2024-02-01",
-    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-)
-from pinecone.grpc import PineconeGRPC as Pinecone
-from src.client import client_env
+        elif choice == '3':
+            index_name = input("Enter the name of Index you want the model to response with respect to: ")
+            # Welcome message
+            print('''Hello! 👋\nI'm here to assist you with your queries related to Petofy.
+            You can ask me anything, and I'll do my best to help.
+            To end your session at any time, simply type "exit".
+            How can I assist you today?''')
+            while True:
+                user_query = input("Query: ")
+                similarity_result = pine_obj.similarity_search(user_query, index_name)
+                if user_query == "exit":
+                    break
+                print(f"Response: {chat_obj.chat_completion(user_query,similarity_result)}")
+            print("Your chat session has ended.")
+        elif choice == '4':
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
 
-client = client_env()
-query="what is petofy"
-query_embedding=client.embeddings.create(input=query, model="text-embedding")
-
-pc = Pinecone(api_key="3b40a01e-51af-4ebc-bf71-fe1e7104fa08")
-index = pc.Index("web-scrap-index")
-# from src.pinecone_upsert import index
-
-similar_queries_obj=index.query(
-    namespace="ns1",
-    vector=query_embedding.data[0].embedding,
-    top_k=5,
-    include_values=False,
-    include_metadata=True
-)
-
-similar_queries=''
-# print(similar_queries)
-for match in similar_queries_obj['matches']:
-    similar_queries+=str(match['metadata'])
-
-# Base prompt
-prompt_base = (
-    "Based on the following information:"
-    f"{similar_queries}"
-    "Please provide a direct and concise response for the following question and if the information needed to answer the question is not present in the provided text, reply with 'Sorry, I can't answer that.'\n"
-)
-prompt = prompt_base + query
-# print(similar_queries)
-
-completion = chat_client.chat.completions.create(
-    model=deployment,
-    messages=[
-        {
-            "role": "system",
-            "content": "You are a helpful assistant. Only provide responses based on the information given. If asked questions outside the dataset, reply 'Sorry, I can't answer that.'",
-        },
-        {"role": "user", "content": prompt},
-    ],
-    extra_body={
-        "data_sources": [
-            {
-                "type": "azure_search",
-                "parameters": {
-                    "endpoint": service_endpoint,
-                    "index_name": "petofy-vector-data",
-                    "authentication": {
-                        "type": "api_key",
-                        "key": key,
-                    },
-                },
-            }
-        ],
-    },
-)
-
-print(completion.choices[0].message.content)
-
+if __name__ == "__main__":
+    main()
